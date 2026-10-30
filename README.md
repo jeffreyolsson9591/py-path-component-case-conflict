@@ -24,3 +24,10 @@ The scope is deliberately narrow: **only direct children of the given directory 
 ## The awkward edge
 
 A single directory entry by itself is never a conflict, even if its name happens to look "wrong"; a conflict requires two or more distinct names sharing the same lowercase form. On a filesystem that is itself case-insensitive, `os.listdir` will not surface two siblings differing only in case (one overwrote the other at write time), so the function will report an empty list. It is designed for directories on a case-sensitive filesystem, or for a case-insensitive filesystem that has preserved both entries through some other mechanism (e.g. an extractor that renames the second occurrence). Check the filesystem type if a zero-result is suspicious.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
